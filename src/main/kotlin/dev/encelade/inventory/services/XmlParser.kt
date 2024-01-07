@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.MapperFeature
 import com.fasterxml.jackson.dataformat.xml.XmlMapper
 import com.fasterxml.jackson.module.kotlin.registerKotlinModule
+import dev.encelade.inventory.model.Color
 import dev.encelade.inventory.model.InventoryPart
 
 import dev.encelade.inventory.model.XmlItem
@@ -35,8 +36,7 @@ class XmlParser {
             InventoryPart(
                 xmlItem.itemId,
                 xmlItem.minQty,
-                xmlItem.color,
-                colorsMap[xmlItem.color]
+                Color(xmlItem.color, colorsMap[xmlItem.color])
             )
         }
     }
