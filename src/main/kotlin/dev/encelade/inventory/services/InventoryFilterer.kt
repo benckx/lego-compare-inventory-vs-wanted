@@ -17,53 +17,14 @@ class InventoryFilterer(
         val inventory = mapper.parse(inventoryFileName)
         val wanted = mapper.parse(wantedListName)
         val modifications = analyzePartsToFilterOut(inventory, wanted)
-        val csvLine = mutableListOf<String>()
 
         val totalToRemoveFromWantedList = modifications.sumOf { it.quantityToRemove() }
         val totalWantedParts = wanted.sumOf { it.quantity }
         println("total to remove from wanted list: $totalToRemoveFromWantedList / $totalWantedParts")
 
-        csvLine += listOf(
-            "modification type",
-            "part id",
-            "color code",
-            "color",
-            "qty needed",
-            "qty inventory",
-            "qty missing"
-        ).joinToString(cellSeparator)
-
-        modifications.forEach { line ->
-            val modificationType =
-                when (line) {
-                    is WantedListModification.SufficientQuantity -> "sufficient"
-                    is WantedListModification.InsufficientQuantity -> "insufficient"
-                    else -> "?"
-                }
-
-            csvLine +=
-                listOf(
-                    modificationType,
-                    line.itemId,
-                    line.color.code,
-                    line.color.description ?: "",
-                    line.neededQuantity,
-                    line.inventoryQuantity,
-                    line.quantityMissing()
-                ).joinToString(cellSeparator) { it.toString() }
-        }
-
         val wantedListNoExtension = wantedListName.split("/").last().split(".").first()
-
-        // wml
         outputToXml(wanted, modifications, wantedListNoExtension)
-
-        // report
-        val csvFileName = "$wantedListNoExtension-report.csv"
-        val csvFilePath = "data/$csvFileName"
-        println("writing report to $csvFilePath")
-        File(csvFilePath).writeText(csvLine.joinToString(separator = "\n"))
-
+        outputReport(modifications, wantedListNoExtension)
     }
 
     private fun outputToXml(
@@ -102,6 +63,49 @@ class InventoryFilterer(
         val xmlFilePath = "data/$xmlFileName"
         println("writing report to $xmlFilePath")
         File(xmlFilePath).writeText(xml)
+    }
+
+    private fun outputReport(
+        modifications: List<WantedListModification>,
+        wantedListNoExtension: String,
+    ) {
+        val csvReportLines = mutableListOf<String>()
+
+        csvReportLines += listOf(
+            "modification type",
+            "part id",
+            "color code",
+            "color",
+            "qty needed",
+            "qty inventory",
+            "qty missing"
+        ).joinToString(cellSeparator)
+
+        modifications.forEach { line ->
+            val modificationType =
+                when (line) {
+                    is WantedListModification.SufficientQuantity -> "sufficient"
+                    is WantedListModification.InsufficientQuantity -> "insufficient"
+                    else -> "?"
+                }
+
+            csvReportLines +=
+                listOf(
+                    modificationType,
+                    line.itemId,
+                    line.color.code,
+                    line.color.description ?: "",
+                    line.neededQuantity,
+                    line.inventoryQuantity,
+                    line.quantityMissing()
+                ).joinToString(cellSeparator) { it.toString() }
+        }
+
+
+        val csvFileName = "$wantedListNoExtension-report.csv"
+        val csvFilePath = "data/$csvFileName"
+        println("writing report to $csvFilePath")
+        File(csvFilePath).writeText(csvReportLines.joinToString(separator = "\n"))
     }
 
     companion object {
