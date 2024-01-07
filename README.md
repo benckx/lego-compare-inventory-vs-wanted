@@ -23,45 +23,40 @@ allow <a href="https://rebrickable.com/">Rebrickable</a> to create an inventory 
 add individual parts.
 
 You can then export your inventory from <a href="https://rebrickable.com/">Rebrickable</a> (go to "My LEGO" -> "All my
-parts" -> "Export Parts" -> "BrickLink XML") and replace the "inventory.xml" file by the export result.
+parts" -> "Export Parts" -> "BrickLink XML") and replace data/inventory.xml by the export result.
 
 ## on Bricklink
 
-Go to your "Wanted List" and click "Download".
+Go to your "Wanted List" and click "Download". Move the file under the data folder.
 
 ## In Code
 
-Replace the files accordingly:
+Replace the wanted list file accordingly:
 
 ```kotlin
 fun main() {
-    val mapper = ItemMapper()
-    val inventory = mapper.parseItems("inventory.xml")
-    val wanted = mapper.parseItems("wanted-razor-crest-75331.xml")
-    ItemComparator.analyze(inventory, wanted)
+    val reportBuilder = WantedListModificationReportBuilder()
+    reportBuilder.outputReportToCsv("data/wanted-razor-crest-75331.xml")
 }
 ```
 
-Then result will show as:
+The script will output a CSV file under folder data with the following format:
 
-```
-[...]
-you already have the part, but in insufficient quantity -> Item(itemId=24246, color=1, minQty=4) (you have 2 but need 4)
-you already have the part, but in insufficient quantity -> Item(itemId=23443, color=86, minQty=6) (you have 2 but need 6)
-you already have the part, but in insufficient quantity -> Item(itemId=26047, color=11, minQty=3) (you have 1 but need 3)
-you already have the part, but in insufficient quantity -> Item(itemId=85984pb127, color=85, minQty=5) (you have 3 but need 5)
-you already have the part in quantity -> Item(itemId=34103, color=86, minQty=4) (you have 8 and you need 4)
-you already have the part in quantity -> Item(itemId=32828, color=86, minQty=4) (you have 9 and you need 4)
-you already have the part, but in insufficient quantity -> Item(itemId=36840, color=85, minQty=6) (you have 3 but need 6)
-you already have the part, but in insufficient quantity -> Item(itemId=2420, color=86, minQty=11) (you have 4 but need 11)
-you already have the part, but in insufficient quantity -> Item(itemId=2431, color=86, minQty=56) (you have 3 but need 56)
-[...]
-```
+| modification type | part id | color code | color             | qty needed | qty inventory | qty missing |
+|-------------------|---------|------------|-------------------|------------|---------------|-------------|
+| sufficient        | 18649   | 86         | Light Bluish Gray | 4          | 4             | 0           |
+| sufficient        | 22484   | 85         | Dark Bluish Gray  | 1          | 2             | 0           |
+| ...               | ...     | ...        | ...               | ...        | ...           | ...         |
+| insufficient      | 10247   | 11         | Black             | 6          | 2             | 4           |
+
+Therefore, you can use this data to update your  <a href="https://www.bricklink.com/">Bricklink</a> "Wanted List" to
+remove the parts you don't need to purchase.
 
 # Future
 
-- Order/sort the result to sort out parts you have enough of and parts you don't have at all
-- Add colors with names instead of codes, for easier navigation (I'd need to encode the list at https://rebrickable.com/colors/ to an enum or a map)
+- Order/sort the result to sort out parts you have enough of and parts you don't have at all -> [DONE]
+- Add colors with names instead of codes, for easier navigation (I'd need to encode the list
+  at https://rebrickable.com/colors/ to an enum or a map)  -> [DONE]
 - Output links of referenced parts, for easier navigation
 - Create some kind of rule engine that allow for color substitution (e.g. "use dark grey if I don't have the part in
   black")
