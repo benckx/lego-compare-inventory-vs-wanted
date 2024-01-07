@@ -14,7 +14,7 @@ import kotlin.text.Charsets.UTF_8
 class XmlParser {
 
     private val colorsMap =
-        File("colors.csv").readLines().associate { line ->
+        File("data/colors.csv").readLines().associate { line ->
             val colorCode = line.split(",")[0]
             val colorName = line.split(",")[1]
             colorCode.toInt() to colorName
@@ -26,17 +26,16 @@ class XmlParser {
             .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
             .configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_PROPERTIES, true)
 
-
     private val collectionType = delegate.typeFactory.constructCollectionType(List::class.java, XmlItem::class.java)!!
 
-    fun parse(resourceFileName: String): List<InventoryPart> {
-        val fileContent = XmlParser::class.java.getResource("/$resourceFileName")!!.readText(UTF_8)
+    fun parse(fileName: String): List<InventoryPart> {
+        val fileContent = File(fileName).readLines(UTF_8).joinToString("\n")
         val xmlItems = delegate.readValue<List<XmlItem>>(fileContent, collectionType)!!
         return xmlItems.map { xmlItem ->
             InventoryPart(
-                xmlItem.itemId,
-                xmlItem.minQty,
-                Color(xmlItem.color, colorsMap[xmlItem.color])
+                partId = xmlItem.itemId,
+                quantity = xmlItem.minQty,
+                color = Color(xmlItem.color, colorsMap[xmlItem.color])
             )
         }
     }

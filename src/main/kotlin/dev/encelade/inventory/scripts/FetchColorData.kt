@@ -38,6 +38,6 @@ fun main() {
     }
 
     val csvOutput = output.sortedBy { it.first().toInt() }.joinToString("\n") { line -> line.joinToString(",") }
-    File("colors.csv").writeText(csvOutput)
+    File("data/colors.csv").writeText(csvOutput)
 
 }

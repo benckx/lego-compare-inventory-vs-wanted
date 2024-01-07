@@ -5,13 +5,15 @@ import dev.encelade.inventory.services.InventoryFilterer.analyzePartsToFilterOut
 import dev.encelade.inventory.services.XmlParser
 import java.io.File
 
-const val CELL_SEPARATOR = ","
-const val CSV_OUTPUT_FILE = "wanted_list_suggested_modifications.csv"
+const val INVENTORY_LOCATION = "data/inventory.xml"
+const val WANTED_LIST_FILE_NAME = "data/wanted-razor-crest-75331.xml"
+
+const val CSV_CELL_SEPARATOR = ","
 
 fun main() {
     val mapper = XmlParser()
-    val inventory = mapper.parse("inventory.xml")
-    val wanted = mapper.parse("wanted-razor-crest-75331.xml")
+    val inventory = mapper.parse(INVENTORY_LOCATION)
+    val wanted = mapper.parse(WANTED_LIST_FILE_NAME)
     val reportLines = analyzePartsToFilterOut(inventory, wanted)
     val csvLine = mutableListOf<String>()
 
@@ -23,7 +25,7 @@ fun main() {
         "needed qty",
         "inventory qty",
         "qty to remove"
-    ).joinToString(CELL_SEPARATOR)
+    ).joinToString(CSV_CELL_SEPARATOR)
 
     reportLines.forEach { line ->
         val modificationType =
@@ -42,8 +44,11 @@ fun main() {
                 line.neededQuantity,
                 line.inventoryQuantity,
                 line.quantityToRemove()
-            ).joinToString(CELL_SEPARATOR) { it.toString() }
+            ).joinToString(CSV_CELL_SEPARATOR) { it.toString() }
     }
 
-    File(CSV_OUTPUT_FILE).writeText(csvLine.joinToString(separator = "\n"))
+    val wantedListNoExtension = WANTED_LIST_FILE_NAME.split("/").last().split(".").first()
+    val csvFileName = "$wantedListNoExtension-modifications.csv"
+    val csvFilePath = "data/$csvFileName"
+    File(csvFilePath).writeText(csvLine.joinToString(separator = "\n"))
 }
