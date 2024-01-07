@@ -5,8 +5,9 @@
 # About
 
 When viewing Lego models on <a href="https://www.bricklink.com/">Bricklink</a>, it is possible to add all the necessary
-parts to a "Wanted List" and then to use this list to find online stores where you can purchase them. However, it
-doesn't seem possible to automatically subtract the parts you already own (from the sets you already own).
+parts to a "Wanted List" and then use this list to find online stores where you can easily purchase them. However, it
+doesn't seem possible to automatically filter out the parts you already own (from the sets you already own) from those "
+Wanted List".
 
 So I wrote this quick script to do that.
 
