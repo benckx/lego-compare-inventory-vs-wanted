@@ -7,30 +7,30 @@ import dev.encelade.inventory.model.XmlItem
 import java.io.File
 
 class InventoryFilterer(
+    private val wantedListName: String,
     private val inventoryFileName: String = DEFAULT_INVENTORY_LOCATION,
     private val cellSeparator: String = DEFAULT_CELL_SEPARATOR,
 ) {
 
     private val mapper = XmlParser()
+    private val wantedListNoExtension = wantedListName.split("/").last().split(".").first()
+    private val modifications = mutableListOf<WantedListModification>()
 
-    fun filterOutInventoryParts(wantedListName: String) {
+    fun execute() {
         val inventory = mapper.parse(inventoryFileName)
         val wanted = mapper.parse(wantedListName)
-        val modifications = analyzePartsToFilterOut(inventory, wanted)
+        modifications += analyzePartsToFilterOut(inventory, wanted)
 
         val totalToRemoveFromWantedList = modifications.sumOf { it.quantityToRemove() }
         val totalWantedParts = wanted.sumOf { it.quantity }
         println("total to remove from wanted list: $totalToRemoveFromWantedList / $totalWantedParts")
 
-        val wantedListNoExtension = wantedListName.split("/").last().split(".").first()
-        outputToXml(wanted, modifications, wantedListNoExtension)
-        outputReport(modifications, wantedListNoExtension)
+        outputToXml(wanted)
+        outputReport()
     }
 
     private fun outputToXml(
         wanted: List<InventoryPart>,
-        modifications: List<WantedListModification>,
-        wantedListNoExtension: String,
     ) {
         val filteredInventoryParts =
             wanted.mapNotNull { wantedItem ->
@@ -65,10 +65,7 @@ class InventoryFilterer(
         File(xmlFilePath).writeText(xml)
     }
 
-    private fun outputReport(
-        modifications: List<WantedListModification>,
-        wantedListNoExtension: String,
-    ) {
+    private fun outputReport() {
         val csvReportLines = mutableListOf<String>()
 
         csvReportLines += listOf(
@@ -102,7 +99,7 @@ class InventoryFilterer(
         }
 
 
-        val csvFileName = "$wantedListNoExtension-report.csv"
+        val csvFileName = "$wantedListNoExtension-output-report.csv"
         val csvFilePath = "data/$csvFileName"
         println("writing report to $csvFilePath")
         File(csvFilePath).writeText(csvReportLines.joinToString(separator = "\n"))

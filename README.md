@@ -37,7 +37,8 @@ Replace the wanted list file accordingly:
 
 ```kotlin
 fun main() {
-    InventoryFilterer().filterOutInventoryParts("data/wanted-razor-crest-75331.xml")
+  val filterer = InventoryFilterer("data/razor-crest-75331.xml")
+  filterer.execute()
 }
 ```
 
