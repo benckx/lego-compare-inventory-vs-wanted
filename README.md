@@ -9,7 +9,8 @@ parts to a "Wanted List" and then use this list to find online stores where you 
 doesn't seem possible to automatically filter out the parts you already own (from the sets you already own) from those "
 Wanted List".
 
-So I wrote this quick script to do that.
+So I wrote this quick script to do that modifies the "Wanted List" XML file by removing the parts you already own. You
+can then re-upload this modified XML and purchase the parts from this new list instead.
 
 Maybe there's already a more simple solution directly on <a href="https://www.bricklink.com/">Bricklink</a>, but I could
 not find it (if you know the solution, feel free to open an issue). In any case I'll be able to do more custom things
@@ -36,12 +37,14 @@ Replace the wanted list file accordingly:
 
 ```kotlin
 fun main() {
-    val reportBuilder = WantedListModificationReportBuilder()
-    reportBuilder.outputReportToCsv("data/wanted-razor-crest-75331.xml")
+    InventoryFilterer().filterOutInventoryParts("data/wanted-razor-crest-75331.xml")
 }
 ```
 
-The script will output a CSV file under folder data with the following format:
+The script will output a modified version of the "Wanted List" under the folder data, where it subtracts the parts you
+already own.
+
+It will also output a CSV report under folder data with the following format:
 
 | modification type | part id | color code | color             | qty needed | qty inventory | qty missing |
 |-------------------|---------|------------|-------------------|------------|---------------|-------------|
@@ -49,9 +52,6 @@ The script will output a CSV file under folder data with the following format:
 | sufficient        | 22484   | 85         | Dark Bluish Gray  | 1          | 2             | 0           |
 | ...               | ...     | ...        | ...               | ...        | ...           | ...         |
 | insufficient      | 10247   | 11         | Black             | 6          | 2             | 4           |
-
-Therefore, you can use this data to update your  <a href="https://www.bricklink.com/">Bricklink</a> "Wanted List" to
-remove the parts you don't need to purchase.
 
 # Future
 

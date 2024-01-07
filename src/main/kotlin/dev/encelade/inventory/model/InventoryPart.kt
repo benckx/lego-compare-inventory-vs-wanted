@@ -1,9 +1,10 @@
 package dev.encelade.inventory.model
 
 data class InventoryPart(
+    val itemType: ItemType,
     val partId: String,
     val quantity: Int,
-    val color : Color,
+    val color: Color,
 ) {
 
     companion object {
