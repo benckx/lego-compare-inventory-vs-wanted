@@ -1,0 +1,19 @@
+plugins {
+    id "com.github.ben-manes.versions" version "0.42.0"
+    id "org.jetbrains.kotlin.jvm" version "$kotlinVersion"
+}
+
+apply plugin: 'kotlin'
+
+repositories {
+    google()
+    mavenCentral()
+}
+
+sourceCompatibility = 21
+targetCompatibility = 21
+
+dependencies {
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
+    testImplementation "junit:junit:4.13.2"
+}
