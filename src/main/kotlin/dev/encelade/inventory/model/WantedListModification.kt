@@ -8,29 +8,26 @@ abstract class WantedListModification(
 ) {
 
     abstract fun quantityToRemove(): Int
+    abstract fun quantityMissing(): Int
+
+    override fun toString(): String {
+        return "${javaClass.simpleName}(itemId='$itemId', color=$color, neededQuantity=$neededQuantity, inventoryQuantity=$inventoryQuantity)"
+    }
 
     class SufficientQuantity(itemId: String, color: Color, neededQuantity: Int, inventoryQuantity: Int) :
         WantedListModification(itemId, color, neededQuantity, inventoryQuantity) {
 
-        override fun quantityToRemove(): Int {
-            return neededQuantity
-        }
+        override fun quantityToRemove(): Int = neededQuantity
+        override fun quantityMissing(): Int = 0
 
-        override fun toString(): String {
-            return "you already have the part in quantity -> $itemId (you have $inventoryQuantity and you need $neededQuantity)"
-        }
     }
 
     class InsufficientQuantity(itemId: String, color: Color, neededQuantity: Int, inventoryQuantity: Int) :
         WantedListModification(itemId, color, neededQuantity, inventoryQuantity) {
 
-        override fun quantityToRemove(): Int {
-            return neededQuantity - inventoryQuantity
-        }
+        override fun quantityToRemove(): Int = inventoryQuantity
+        override fun quantityMissing(): Int = neededQuantity - inventoryQuantity
 
-        override fun toString(): String {
-            return "you already have the part, but in insufficient quantity -> $itemId (you have $inventoryQuantity but need $neededQuantity)"
-        }
     }
 
 }

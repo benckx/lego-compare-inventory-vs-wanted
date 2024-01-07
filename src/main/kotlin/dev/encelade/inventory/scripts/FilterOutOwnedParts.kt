@@ -14,20 +14,24 @@ fun main() {
     val mapper = XmlParser()
     val inventory = mapper.parse(INVENTORY_LOCATION)
     val wanted = mapper.parse(WANTED_LIST_FILE_NAME)
-    val reportLines = analyzePartsToFilterOut(inventory, wanted)
+    val modifications = analyzePartsToFilterOut(inventory, wanted)
     val csvLine = mutableListOf<String>()
+
+    val totalToRemoveFromWantedList = modifications.sumOf { it.quantityToRemove() }
+    val totalWantedParts = wanted.sumOf { it.quantity }
+    println("total to remove from wanted list: $totalToRemoveFromWantedList / $totalWantedParts")
 
     csvLine += listOf(
         "modification type",
         "part id",
         "color code",
         "color",
-        "needed qty",
-        "inventory qty",
-        "qty to remove"
+        "qty needed",
+        "qty inventory",
+        "qty missing"
     ).joinToString(CSV_CELL_SEPARATOR)
 
-    reportLines.forEach { line ->
+    modifications.forEach { line ->
         val modificationType =
             when (line) {
                 is WantedListModification.SufficientQuantity -> "sufficient"
@@ -43,7 +47,7 @@ fun main() {
                 line.color.description ?: "",
                 line.neededQuantity,
                 line.inventoryQuantity,
-                line.quantityToRemove()
+                line.quantityMissing()
             ).joinToString(CSV_CELL_SEPARATOR) { it.toString() }
     }
 
