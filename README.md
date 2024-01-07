@@ -37,8 +37,8 @@ Replace the wanted list file accordingly:
 
 ```kotlin
 fun main() {
-  val filterer = InventoryFilterer("data/razor-crest-75331.xml")
-  filterer.execute()
+    val filterer = InventoryFilterer("data/razor-crest-75331.xml")
+    filterer.execute()
 }
 ```
 
@@ -59,7 +59,6 @@ It will also output a CSV report under folder data with the following format:
 - Order/sort the result to sort out parts you have enough of and parts you don't have at all -> [DONE]
 - Add colors with names instead of codes, for easier navigation (I'd need to encode the list
   at https://rebrickable.com/colors/ to an enum or a map)  -> [DONE]
-- Output links of referenced parts, for easier navigation
-- Create some kind of rule engine that allow for color substitution (e.g. "use dark grey if I don't have the part in
+- Create some kind of rules engine that allow for color substitution (e.g. "use dark grey if I don't have the part in
   black")
 - Maybe a UI and an executable so it's user-friendly for everyone
