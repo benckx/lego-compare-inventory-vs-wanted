@@ -33,11 +33,10 @@ object InventoryFilterer {
                     }
                 }
         }
-
         return result
             .toList()
-            .sortedBy { it.itemId }
             .sortedBy { it.color.code }
+            .sortedBy { it.itemId }
             .sortedBy {
                 when (it) {
                     is WantedListModification.SufficientQuantity -> 0
@@ -45,6 +44,7 @@ object InventoryFilterer {
                     else -> Int.MAX_VALUE
                 }
             }
+
     }
 
 }
