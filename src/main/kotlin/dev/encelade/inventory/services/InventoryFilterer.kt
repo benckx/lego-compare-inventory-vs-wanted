@@ -61,7 +61,7 @@ class InventoryFilterer(
         val xml = mapper.outputToString(xmlInventory)
         val xmlFileName = "$wantedListNoExtension-updated.xml"
         val xmlFilePath = "data/$xmlFileName"
-        println("writing report to $xmlFilePath")
+        println("writing updated XML to $xmlFilePath")
         File(xmlFilePath).writeText(xml)
     }
 
@@ -114,21 +114,21 @@ class InventoryFilterer(
             inventory: List<InventoryPart>,
             wanted: List<InventoryPart>,
         ): List<WantedListUpdate> {
-            val result = mutableListOf<WantedListUpdate>()
+            val updates = mutableListOf<WantedListUpdate>()
 
             wanted.forEach { wantedItem ->
                 inventory
                     .find { inventoryItem -> InventoryPart.areEqualsByIdAndColor(inventoryItem, wantedItem) }
                     ?.let { inventoryMatchingItem ->
                         if (inventoryMatchingItem.quantity >= wantedItem.quantity) {
-                            result += WantedListUpdate.SufficientQuantity(
+                            updates += WantedListUpdate.SufficientQuantity(
                                 wantedItem.partId,
                                 wantedItem.color,
                                 wantedItem.quantity,
                                 inventoryMatchingItem.quantity
                             )
                         } else {
-                            result += WantedListUpdate.InsufficientQuantity(
+                            updates += WantedListUpdate.InsufficientQuantity(
                                 wantedItem.partId,
                                 wantedItem.color,
                                 wantedItem.quantity,
@@ -138,7 +138,7 @@ class InventoryFilterer(
                     }
             }
 
-            return result
+            return updates
                 .toList()
                 .sortedBy { it.color.code }
                 .sortedBy { it.itemId }
