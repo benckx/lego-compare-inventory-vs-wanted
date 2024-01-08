@@ -13,8 +13,8 @@ the inventory generated from <a href="https://rebrickable.com/">Rebrickable</a>)
 Bricklink to create a new "Wanted List" and purchase the parts from this list instead.
 
 Maybe there's already a more simple solution directly on Bricklink, but I could not find it (if you know the solution,
-feel free to open an issue). There are options on Bricklink to add and part out sets, but it doesn't seem taken into
-account while making a "Wanted List". But maybe I'm missing something obvious.
+feel free to open an issue). There are options on Bricklink to add and part out sets, but it doesn't seem to be taken
+into account while making a "Wanted List". But maybe I'm missing something obvious.
 
 In any case I'll be able to do more custom things with my parts lists this way.
 
