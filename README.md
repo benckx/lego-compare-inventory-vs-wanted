@@ -4,16 +4,16 @@
 
 # About
 
-When viewing Lego models on <a href="https://www.bricklink.com/">Bricklink</a>, it is possible to add all the necessary
+When viewing Lego models on <a href="https://www.BrickLink.com/">BrickLink</a>, it is possible to add all the necessary
 parts to a "Wanted List" (and then use this list to purchase the parts). However, it doesn't seem possible to
 automatically filter out the parts you already own (from the sets you already own) from those "Wanted List".
 
 So I wrote a script that updates the "Wanted List" XML file by taking into account the parts you already own (based on
 the inventory generated from <a href="https://rebrickable.com/">Rebrickable</a>). You can then upload the updated XML on
-Bricklink to create a new "Wanted List" and purchase the parts from this list instead.
+BrickLink to create a new "Wanted List" and purchase the parts from this list instead.
 
-Maybe there's already a more simple solution directly on Bricklink, but I could not find it (if you know the solution,
-feel free to open an issue). There are options on Bricklink to add and part out sets, but it doesn't seem to be taken
+Maybe there's already a more simple solution directly on BrickLink, but I could not find it (if you know the solution,
+feel free to open an issue). There are options on BrickLink to add and part out sets, but it doesn't seem to be taken
 into account while making a "Wanted List". But maybe I'm missing something obvious.
 
 In any case I'll be able to do more custom things with my parts lists this way.
@@ -28,7 +28,7 @@ Rebrickable to create an inventory of all the parts you own. You can also add in
 You can then export your inventory from Rebrickable in the BrickLink format (go to "My LEGO" -> "All my parts" -> "
 Export Parts" -> "BrickLink XML") and replace `data/inventory.xml` by the export result.
 
-## on Bricklink
+## on BrickLink
 
 Go to your "Wanted List" and click "Download". Move the file under the `data` folder.
 
@@ -60,5 +60,5 @@ The script will output 2 files:
 
 - Implement some kind of rules engine that allow for color substitution (e.g. "use dark grey if I don't have the part in
   black") or part substitution (e.g. "use two 2x2 brick if I don't have one 2x4 brick") (something like that already
-  exists in the Studio app of Bricklink)
+  exists in the Studio app of BrickLink)
 - Maybe a UI and an executable, so it's user-friendly for everyone
