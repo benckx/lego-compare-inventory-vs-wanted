@@ -32,23 +32,23 @@ class InventoryFilterer(
     private fun outputToXml(
         wanted: List<InventoryPart>,
     ) {
-        val filteredInventoryParts =
+        val updatedInventoryParts =
             wanted.mapNotNull { wantedItem ->
-                val modification = wantedListUpdates
+                val update = wantedListUpdates
                     .find { it.itemId == wantedItem.partId && it.color == wantedItem.color }
 
-                if (modification == null) {
+                if (update == null) {
                     wantedItem
                 } else {
-                    if (modification.quantityMissing() > 0) {
-                        wantedItem.copy(quantity = modification.quantityMissing())
+                    if (update.quantityMissing() > 0) {
+                        wantedItem.copy(quantity = update.quantityMissing())
                     } else {
                         null
                     }
                 }
             }
 
-        val xmlItems = filteredInventoryParts.map {
+        val xmlItems = updatedInventoryParts.map {
             XmlItem(
                 itemType = it.itemType.asXml(),
                 itemId = it.partId,
@@ -58,7 +58,7 @@ class InventoryFilterer(
         }
 
         val xmlInventory = XmlInventory(xmlItems)
-        val xml = mapper.outputToString(xmlInventory)
+        val xml = mapper.writeValueAsString(xmlInventory)
         val xmlFileName = "$wantedListNoExtension-updated.xml"
         val xmlFilePath = "data/$xmlFileName"
         println("writing updated XML to $xmlFilePath")

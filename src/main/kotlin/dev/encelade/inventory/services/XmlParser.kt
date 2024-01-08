@@ -41,7 +41,7 @@ class XmlParser {
         }
     }
 
-    fun outputToString(xmlInventory: XmlInventory): String {
+    fun writeValueAsString(xmlInventory: XmlInventory): String {
         return delegate.writeValueAsString(xmlInventory)
     }
 
