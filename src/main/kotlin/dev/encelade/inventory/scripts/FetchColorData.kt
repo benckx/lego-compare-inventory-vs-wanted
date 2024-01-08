@@ -3,6 +3,9 @@ package dev.encelade.inventory.scripts
 import org.jsoup.Jsoup
 import java.io.File
 
+/**
+ * Updates the data/colors.csv file, based on the list from https://rebrickable.com/colors/
+ */
 fun main() {
     val table =
         Jsoup
@@ -21,7 +24,7 @@ fun main() {
             .toMap()
 
     val brickLinkColIdx = labelToIndexMap["BrickLink"]!!
-    val output = mutableListOf<List<String>>()
+    val csvLines = mutableListOf<List<String>>()
 
     table.getElementsByTag("tr").toList().filterNotNull().forEach { row ->
         val cells = row.getElementsByTag("td").toList().filterNotNull()
@@ -32,12 +35,12 @@ fun main() {
                 val from = brickLinkText.indexOf("'")
                 val to = brickLinkText.lastIndexOf("'")
                 val colorName = brickLinkText.substring(from + 1, to)
-                output.add(listOf(colorCode, colorName))
+                csvLines.add(listOf(colorCode, colorName))
             }
         }
     }
 
-    val csvOutput = output.sortedBy { it.first().toInt() }.joinToString("\n") { line -> line.joinToString(",") }
+    val csvOutput = csvLines.sortedBy { it.first().toInt() }.joinToString("\n") { cells -> cells.joinToString(",") }
     File("data/colors.csv").writeText(csvOutput)
 
 }

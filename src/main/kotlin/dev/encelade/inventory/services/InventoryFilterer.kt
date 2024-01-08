@@ -1,7 +1,7 @@
 package dev.encelade.inventory.services
 
 import dev.encelade.inventory.model.InventoryPart
-import dev.encelade.inventory.model.WantedListModification
+import dev.encelade.inventory.model.WantedListUpdate
 import dev.encelade.inventory.model.XmlInventory
 import dev.encelade.inventory.model.XmlItem
 import java.io.File
@@ -14,19 +14,19 @@ class InventoryFilterer(
 
     private val mapper = XmlParser()
     private val wantedListNoExtension = wantedListName.split("/").last().split(".").first()
-    private val modifications = mutableListOf<WantedListModification>()
+    private val wantedListUpdates = mutableListOf<WantedListUpdate>()
 
     fun execute() {
         val inventory = mapper.parse(inventoryFileName)
         val wanted = mapper.parse(wantedListName)
-        modifications += analyzePartsToFilterOut(inventory, wanted)
+        wantedListUpdates += analyzePartsToFilterOut(inventory, wanted)
 
-        val totalToRemoveFromWantedList = modifications.sumOf { it.quantityToRemove() }
+        val totalToRemoveFromWantedList = wantedListUpdates.sumOf { it.quantityToRemove() }
         val totalWantedParts = wanted.sumOf { it.quantity }
         println("total to remove from wanted list: $totalToRemoveFromWantedList / $totalWantedParts")
 
         outputToXml(wanted)
-        outputReport()
+        outputCsvReport()
     }
 
     private fun outputToXml(
@@ -34,7 +34,7 @@ class InventoryFilterer(
     ) {
         val filteredInventoryParts =
             wanted.mapNotNull { wantedItem ->
-                val modification = modifications
+                val modification = wantedListUpdates
                     .find { it.itemId == wantedItem.partId && it.color == wantedItem.color }
 
                 if (modification == null) {
@@ -65,7 +65,7 @@ class InventoryFilterer(
         File(xmlFilePath).writeText(xml)
     }
 
-    private fun outputReport() {
+    private fun outputCsvReport() {
         val csvReportLines = mutableListOf<String>()
 
         csvReportLines += listOf(
@@ -78,11 +78,11 @@ class InventoryFilterer(
             "qty missing"
         ).joinToString(cellSeparator)
 
-        modifications.forEach { line ->
+        wantedListUpdates.forEach { line ->
             val modificationType =
                 when (line) {
-                    is WantedListModification.SufficientQuantity -> "sufficient"
-                    is WantedListModification.InsufficientQuantity -> "insufficient"
+                    is WantedListUpdate.SufficientQuantity -> "sufficient"
+                    is WantedListUpdate.InsufficientQuantity -> "insufficient"
                     else -> "?"
                 }
 
@@ -113,22 +113,22 @@ class InventoryFilterer(
         private fun analyzePartsToFilterOut(
             inventory: List<InventoryPart>,
             wanted: List<InventoryPart>,
-        ): List<WantedListModification> {
-            val result = mutableListOf<WantedListModification>()
+        ): List<WantedListUpdate> {
+            val result = mutableListOf<WantedListUpdate>()
 
             wanted.forEach { wantedItem ->
                 inventory
                     .find { inventoryItem -> InventoryPart.areEqualsByIdAndColor(inventoryItem, wantedItem) }
                     ?.let { inventoryMatchingItem ->
                         if (inventoryMatchingItem.quantity >= wantedItem.quantity) {
-                            result += WantedListModification.SufficientQuantity(
+                            result += WantedListUpdate.SufficientQuantity(
                                 wantedItem.partId,
                                 wantedItem.color,
                                 wantedItem.quantity,
                                 inventoryMatchingItem.quantity
                             )
                         } else {
-                            result += WantedListModification.InsufficientQuantity(
+                            result += WantedListUpdate.InsufficientQuantity(
                                 wantedItem.partId,
                                 wantedItem.color,
                                 wantedItem.quantity,
@@ -144,8 +144,8 @@ class InventoryFilterer(
                 .sortedBy { it.itemId }
                 .sortedBy {
                     when (it) {
-                        is WantedListModification.SufficientQuantity -> 0
-                        is WantedListModification.InsufficientQuantity -> 1
+                        is WantedListUpdate.SufficientQuantity -> 0
+                        is WantedListUpdate.InsufficientQuantity -> 1
                         else -> Int.MAX_VALUE
                     }
                 }
